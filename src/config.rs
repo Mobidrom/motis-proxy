@@ -75,14 +75,11 @@ fn parse_max_duration_hours(max_duration_hours: Option<&str>) -> i32 {
 
 #[derive(Debug)]
 pub struct Backend {
-    days: i32,
+    pub days: i32,
     pub backend_address: BackendAddress,
 }
 
 impl Backend {
-    pub fn can_route_in_days(&self, days: i32) -> bool {
-        self.days > days
-    }
     fn new(days_backend: &str) -> Self {
         let (days, backend) = days_backend
             .split_once('#')

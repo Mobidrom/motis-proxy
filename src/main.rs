@@ -6,10 +6,10 @@ use std::{net::SocketAddr, sync::Arc};
 use tokio::net::{TcpListener, TcpStream};
 use tower::ServiceBuilder;
 
-use crate::current_offset::{get_offset_from_now, get_offset_from_timestamp};
+use crate::days::{backend_days_from_now, backend_days_from_timestamp};
 
 mod config;
-mod current_offset;
+mod days;
 mod parameters;
 mod path_rewriter;
 
@@ -65,7 +65,7 @@ async fn send_to_first_backend_from_timestamp(
     send_to_first_backend(
         req,
         config,
-        get_offset_from_timestamp(timestamp, direction, max_duration_hours),
+        backend_days_from_timestamp(timestamp, direction, max_duration_hours),
     )
     .await
 }
@@ -79,7 +79,7 @@ async fn send_to_first_backend_from_now(
     send_to_first_backend(
         req,
         config,
-        get_offset_from_now(direction, max_duration_hours),
+        backend_days_from_now(direction, max_duration_hours),
     )
     .await
 }
@@ -87,15 +87,15 @@ async fn send_to_first_backend_from_now(
 async fn send_to_first_backend(
     req: Request<Incoming>,
     config: Arc<config::Config>,
-    current_day_offset: i32,
+    backend_days: i32,
 ) -> Result<Response<Incoming>, ErrorBox> {
     println!(
         "Forwarding request to '{}'. Days required on backend: {}",
         req.uri().path(),
-        current_day_offset + 1
+        backend_days
     );
     for backend in &config.backends {
-        if backend.can_route_in_days(current_day_offset) {
+        if backend.days >= backend_days {
             return forward_request(req, &backend.backend_address).await;
         }
     }

@@ -6,7 +6,19 @@ use chrono::Utc;
 #[cfg(test)]
 use mocks::Utc;
 
-pub fn get_offset_from_timestamp(
+pub fn backend_days_from_timestamp(
+    timestamp: Timestamp,
+    direction: SearchDirection,
+    max_duration_hours: i32,
+) -> i32 {
+    get_offset_from_timestamp(timestamp, direction, max_duration_hours) + 1
+}
+
+pub fn backend_days_from_now(direction: SearchDirection, max_duration_hours: i32) -> i32 {
+    get_offset_from_now(direction, max_duration_hours) + 1
+}
+
+fn get_offset_from_timestamp(
     timestamp: Timestamp,
     direction: SearchDirection,
     max_duration_hours: i32,
@@ -21,7 +33,7 @@ pub fn get_offset_from_timestamp(
     final_day - today
 }
 
-pub fn get_offset_from_now(direction: SearchDirection, max_duration_hours: i32) -> i32 {
+fn get_offset_from_now(direction: SearchDirection, max_duration_hours: i32) -> i32 {
     let now = Utc::now();
     if direction == SearchDirection::Forward {
         (now + chrono::Duration::hours(max_duration_hours.into())).num_days_from_ce()
@@ -44,9 +56,9 @@ mod tests {
             .unwrap()
             .to_utc();
 
-        let curret_offset = get_offset_from_timestamp(timestamp, SearchDirection::Forward, 12);
+        let offset_days = get_offset_from_timestamp(timestamp, SearchDirection::Forward, 12);
 
-        assert_eq!(curret_offset, 0i32);
+        assert_eq!(offset_days, 0i32);
     }
 
     #[test]
@@ -55,9 +67,9 @@ mod tests {
             .unwrap()
             .to_utc();
 
-        let curret_offset = get_offset_from_timestamp(timestamp, SearchDirection::Forward, 12);
+        let offset_days = get_offset_from_timestamp(timestamp, SearchDirection::Forward, 12);
 
-        assert_eq!(curret_offset, 1i32);
+        assert_eq!(offset_days, 1i32);
     }
 
     #[test]
@@ -66,9 +78,9 @@ mod tests {
             .unwrap()
             .to_utc();
 
-        let curret_offset = get_offset_from_timestamp(timestamp, SearchDirection::Forward, 24);
+        let offset_days = get_offset_from_timestamp(timestamp, SearchDirection::Forward, 24);
 
-        assert_eq!(curret_offset, 5i32);
+        assert_eq!(offset_days, 5i32);
     }
 
     #[test]
@@ -77,9 +89,9 @@ mod tests {
             .unwrap()
             .to_utc();
 
-        let curret_offset = get_offset_from_timestamp(timestamp, SearchDirection::Forward, 24);
+        let offset_days = get_offset_from_timestamp(timestamp, SearchDirection::Forward, 24);
 
-        assert_eq!(curret_offset, -1i32);
+        assert_eq!(offset_days, -1i32);
     }
 
     #[test]
@@ -88,9 +100,9 @@ mod tests {
             .unwrap()
             .to_utc();
 
-        let curret_offset = get_offset_from_timestamp(timestamp, SearchDirection::Backward, 12);
+        let offset_days = get_offset_from_timestamp(timestamp, SearchDirection::Backward, 12);
 
-        assert_eq!(curret_offset, 0i32);
+        assert_eq!(offset_days, 0i32);
     }
 
     #[test]
@@ -99,9 +111,9 @@ mod tests {
             .unwrap()
             .to_utc();
 
-        let curret_offset = get_offset_from_timestamp(timestamp, SearchDirection::Backward, 12);
+        let offset_days = get_offset_from_timestamp(timestamp, SearchDirection::Backward, 12);
 
-        assert_eq!(curret_offset, 1i32);
+        assert_eq!(offset_days, 1i32);
     }
 
     #[test]
@@ -110,37 +122,37 @@ mod tests {
             .unwrap()
             .to_utc();
 
-        let curret_offset = get_offset_from_timestamp(timestamp, SearchDirection::Backward, 24);
+        let offset_days = get_offset_from_timestamp(timestamp, SearchDirection::Backward, 24);
 
-        assert_eq!(curret_offset, 5i32);
+        assert_eq!(offset_days, 5i32);
     }
 
     #[test]
     fn getOffsetFromNow_forwardSeachEndingOnSameDay_getOffset0() {
-        let curret_offset = get_offset_from_now(SearchDirection::Forward, 16);
+        let offset_days = get_offset_from_now(SearchDirection::Forward, 16);
 
-        assert_eq!(curret_offset, 0i32);
+        assert_eq!(offset_days, 0i32);
     }
 
     #[test]
     fn getOffsetFromNow_forwardSeachEndingOnNextDay_getOffset1() {
-        let curret_offset = get_offset_from_now(SearchDirection::Forward, 17);
+        let offset_days = get_offset_from_now(SearchDirection::Forward, 17);
 
-        assert_eq!(curret_offset, 1i32);
+        assert_eq!(offset_days, 1i32);
     }
 
     #[test]
     fn getOffsetFromNow_forwardSeachEndingIn5Days_getOffset5() {
-        let curret_offset = get_offset_from_now(SearchDirection::Forward, 24 * 5);
+        let offset_days = get_offset_from_now(SearchDirection::Forward, 24 * 5);
 
-        assert_eq!(curret_offset, 5i32);
+        assert_eq!(offset_days, 5i32);
     }
 
     #[test]
     fn getOffsetFromNow_backwardSeachAnyDuration_getOffset0() {
-        let curret_offset = get_offset_from_now(SearchDirection::Backward, 9000);
+        let offset_days = get_offset_from_now(SearchDirection::Backward, 9000);
 
-        assert_eq!(curret_offset, 0i32);
+        assert_eq!(offset_days, 0i32);
     }
 }
 

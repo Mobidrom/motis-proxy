@@ -27,8 +27,19 @@ where
     type Error = S::Error;
     fn call(&self, mut req: Req) -> Self::Future {
         let request_path = req.uri().path_and_query().expect("Missing path").as_str();
+        let prefix = self.config.subpath.as_str();
         let backend_path = request_path
-            .strip_prefix(self.config.subpath.as_str())
+            .strip_prefix(prefix)
+            .and_then(|subpath| {
+                // Ensure new path is not empty
+                if subpath == "" {
+                    Some("/")
+                } else if subpath.starts_with('/') {
+                    Some(subpath)
+                } else {
+                    None
+                }
+            })
             .unwrap_or_else(|| {
                 println!(
                     "WARNING Path does not match subpath '{}': '{}'",

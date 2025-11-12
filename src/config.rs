@@ -64,7 +64,17 @@ fn parse_bind_address(bind_addr: Option<&str>, bind_port: Option<&str>) -> (IpAd
 }
 
 fn parse_prefix(prefix: Option<&str>) -> String {
-    prefix.unwrap_or("").to_string()
+    prefix
+        .and_then(|prefix| {
+            // Remove trailing '/' if prefix ≠ '/'
+            Some(if prefix.len() > 1 {
+                prefix.strip_suffix('/').unwrap_or(prefix)
+            } else {
+                prefix
+            })
+        })
+        .unwrap_or("")
+        .to_string()
 }
 
 fn parse_max_duration_hours(max_duration_hours: Option<&str>) -> i32 {

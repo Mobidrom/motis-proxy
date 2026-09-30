@@ -55,6 +55,15 @@ BACKEND_ADDRESS=http://127.0.0.1:8083 BACKENDS=3#http://127.0.0.1:8081;9#http://
 This starts a proxy server with backends for 3 and 9 days and the default backend.
 
 
+## License
+
+Copyright NRW.Mobidrom GmbH, 2026
+Licensed under the EUPL
+
+See [LICENSE] for the European Union Public Licence (EUPL) text.
+Notice that the EUPL is also available in several [official languages](https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12).
+
+
 ## TODO
 
 * Currently all static data will be served by the fastest instance, as the requests don't contain a `time` parameter

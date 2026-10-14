@@ -55,6 +55,22 @@ BACKEND_ADDRESS=http://127.0.0.1:8083 BACKENDS=3#http://127.0.0.1:8081;9#http://
 This starts a proxy server with backends for 3 and 9 days and the default backend.
 
 
+## License
+
+Copyright NRW.Mobidrom GmbH, 2026
+
+This project is licensed under the **European Union Public Licence v1.2 (EUPL-1.2)**.
+See the [LICENSE](LICENSE) file for the full license text.
+
+The EUPL is an open-source license created and approved by the European Commission.
+It is specifically designed for software published by public administrations and is compatible with several widely used open-source licenses (including GPL, LGPL, MPL, and Apache 2.0 under its compatibility clause).
+
+For more information, see the [official EUPL page](https://interoperable-europe.ec.europa.eu/collection/eupl).
+
+Notice that the EUPL is also available in several other [official languages](https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12);
+all official language versions are equally valid (Art. 13 EUPL).
+
+
 ## TODO
 
 * Currently all static data will be served by the fastest instance, as the requests don't contain a `time` parameter
